@@ -432,11 +432,24 @@ int main(int argc, char* argv[]) {
             X_new[6].push_back(st_data.NOT);
         }
     }
-    //int count2 = 0;
+    int count = X_new[0].size();
     //cout<<"count = "<<count<<endl;
-    // std::tm start_date_tm2 = {};
-    // std::istringstream start_date_stream2(start_date);
-    // start_date_stream2 >> std::get_time(&start_date_tm, "%Y-%m-%d");
+    std::tm start_date_tm2 = {};
+    std::istringstream start_date_stream2(start_date);
+    start_date_stream2 >> std::get_time(&start_date_tm2, "%Y-%m-%d");
+
+    // Add one day
+    start_date_tm2.tm_mday -= 1;
+    std::mktime(&start_date_tm2);
+
+    // Convert the updated date back to a string
+    std::ostringstream start_date_updated_stream2;
+    start_date_updated_stream2 << std::put_time(&start_date_tm2, "%Y-%m-%d");
+    start_date = start_date_updated_stream2.str();
+
+    // std::tm end_date_tm2 = {};
+    // std::istringstream end_date_stream2(end_date);
+    // end_date_stream2 >> std::get_time(&end_date_tm, "%Y-%m-%d");
 
     // // Add one day
     // start_date_tm2.tm_mday -= 1;
@@ -448,20 +461,24 @@ int main(int argc, char* argv[]) {
     // start_date = start_date_updated_stream2.str();
 
 
+    int itr = 0;
     for(auto& st_data: stock_data){
-        if(st_data.date >= start_date && st_data.date < end_date){
-            X_new[7].push_back(st_data.open);
-            ////cout<<st_data.open<<endl;
+        if(itr<count){
+            if(st_data.date >= start_date && st_data.date < end_date){
+                X_new[7].push_back(st_data.open);
+                ////cout<<st_data.open<<endl;
+                itr++;
+            }
         }
     }
-    int count = X_new[0].size();
+    
     // cout<<"X_new[0]  size  === "<<X_new[0].size()<<endl;;
     // cout<<"X_new[6]  size  === "<<X_new[6].size()<<endl;;
     // cout<<"X_new[7]  size  === "<<X_new[7].size()<<endl;;
     // cout<<"count2 = "<<count2<<endl;
     // cout<<"dimentions of X_new "<<X_new.size()<<" "<<X_new[0].size()<<endl;
     std::vector<std::vector<double>> Y_predicted;
-    for(auto& a:BETA){
+    for(auto& a:X){
         for(auto b: a){
             cout<<b<<" ";
         }
