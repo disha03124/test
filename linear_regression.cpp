@@ -294,32 +294,51 @@ int main(int argc, char* argv[]) {
     // std::ostringstream start_date_updated_stream;
     // start_date_updated_stream << std::put_time(&start_date_tm, "%Y-%m-%d");
     // train_start_date = start_date_updated_stream.str();
-    std::tm start_date_tm = {};
-    std::istringstream start_date_stream(train_start_date);
-    start_date_stream >> std::get_time(&start_date_tm, "%Y-%m-%d");
+    std::tm train_start_date_tm = {};
+    std::istringstream train_start_date_stream(train_start_date);
+    train_start_date_stream >> std::get_time(&train_start_date_tm, "%Y-%m-%d");
 
     // Add one day
-    start_date_tm.tm_mday -= 1;
-    std::mktime(&start_date_tm);
+    train_start_date_tm.tm_mday -= 1;
+    std::mktime(&train_start_date_tm);
 
     // Convert the updated date back to a string
-    std::ostringstream start_date_updated_stream;
-    start_date_updated_stream << std::put_time(&start_date_tm, "%Y-%m-%d");
-    train_start_date = start_date_updated_stream.str();
+    std::ostringstream train_start_date_updated_stream;
+    train_start_date_updated_stream << std::put_time(&train_start_date_tm, "%Y-%m-%d");
+    train_start_date = train_start_date_updated_stream.str();
 
+    // std::tm end_date_tm = {};
+    // std::istringstream end_date_stream(train_end_date);
+    // start_date_stream >> std::get_time(&start_date_tm, "%Y-%m-%d");
+
+    // // Add one day
+    // start_date_tm.tm_mday -= 1;
+    // std::mktime(&end_date_tm);
+
+    // // Convert the updated date back to a string
+    // std::ostringstream end_date_updated_stream;
+    // end_date_updated_stream << std::put_time(&end_date_tm, "%Y-%m-%d");
+    // train_end_date = end_date_updated_stream.str();
+
+    int don = 0;
     for(auto& st_data: stock_data){
+        
         if(st_data.date >= train_start_date && st_data.date<=train_end_date){
+        if(don<sz){
             X[7].push_back(st_data.open);
+            don++;
             ////cout<<st_data.open<<endl;
         }
+        }
     }
-    //cout<<"dimentions of X "<<X.size()<<" "<<X[0].size()<<endl;
-    // for(auto & row: X){
-    //     for(auto & e:row){
-    //         //cout<<e<<endl;
-    //     }
-    // }
-    
+    // cout<<"dimentions of X "<<X.size()<<" "<<X[0].size()<<endl;
+    for(auto & row: X){
+        for(auto & e:row){
+            cout<<e<<" ";
+        }
+        cout<<endl;
+    }
+    cout<<"X_new"<<endl;
    // Initialize Y with one row and 'sz' columns, filled with zeros
     std::vector<std::vector<double>> Y(1, std::vector<double>(sz, 0));
     //cout<<"dimentions of Y : "<<Y.size()<<" "<<Y[0].size()<<endl;
@@ -433,43 +452,48 @@ int main(int argc, char* argv[]) {
         }
     }
     int count = X_new[0].size();
+    cout<<count<<endl;
     //cout<<"count = "<<count<<endl;
-    std::tm start_date_tm2 = {};
-    std::istringstream start_date_stream2(start_date);
-    start_date_stream2 >> std::get_time(&start_date_tm2, "%Y-%m-%d");
+    cout<<start_date<<endl;
 
-    // Add one day
-    start_date_tm2.tm_mday -= 1;
-    std::mktime(&start_date_tm2);
+    std::tm start_date_tm = {};
+    std::istringstream start_date_stream(start_date);
+    start_date_stream >> std::get_time(&start_date_tm, "%Y-%m-%d");
+
+// Add one day
+    start_date_tm.tm_mday += 1;
+    std::mktime(&start_date_tm);
 
     // Convert the updated date back to a string
-    std::ostringstream start_date_updated_stream2;
-    start_date_updated_stream2 << std::put_time(&start_date_tm2, "%Y-%m-%d");
-    start_date = start_date_updated_stream2.str();
+    std::ostringstream start_date_updated_stream;
+    start_date_updated_stream << std::put_time(&start_date_tm, "%Y-%m-%d");
+    start_date = start_date_updated_stream.str();
 
-    // std::tm end_date_tm2 = {};
-    // std::istringstream end_date_stream2(end_date);
-    // end_date_stream2 >> std::get_time(&end_date_tm, "%Y-%m-%d");
-
-    // // Add one day
-    // start_date_tm2.tm_mday -= 1;
-    // std::mktime(&start_date_tm2);
-
-    // // Convert the updated date back to a string
-    // std::ostringstream start_date_updated_stream2;
-    // start_date_updated_stream2 << std::put_time(&start_date_tm2, "%Y-%m-%d");
-    // start_date = start_date_updated_stream2.str();
-
+    
+    cout<<start_date<<endl;
+    
 
     int itr = 0;
     for(auto& st_data: stock_data){
-        if(itr<count){
-            if(st_data.date >= start_date && st_data.date < end_date){
+        
+        if(st_data.date >= start_date && st_data.date < end_date){
+            if(itr!=count + 1){
+                //cout<<st_data.date<<endl;
                 X_new[7].push_back(st_data.open);
                 ////cout<<st_data.open<<endl;
                 itr++;
+                //cout
             }
         }
+    }
+    cout<<count<<endl;
+
+
+    for(auto&a : X_new){
+        for(auto& b: a){
+            cout<<b<<" ";
+        }
+        cout<<endl;
     }
     
     // cout<<"X_new[0]  size  === "<<X_new[0].size()<<endl;;
@@ -507,7 +531,7 @@ int main(int argc, char* argv[]) {
 
     std::vector<int> signals;
     for(int i = 0; i<count; i++){
-        cout<<Y_actual[0][i] <<"  "<<Y_predicted[0][i]<<endl;
+        //cout<<Y_actual[0][i] <<"  "<<Y_predicted[0][i]<<endl;
         if(Y_actual[0][i] > (Y_predicted[0][i])*p){
             signals.push_back(1);
         }else if(Y_actual[0][i] < (Y_predicted[0][i])*p){
